@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
-from src.api.v1 import healthcheck
+from TaskTraker.src.api.v1 import healthcheck
 
 app = FastAPI(
     title='Awesome Task Exchange System',

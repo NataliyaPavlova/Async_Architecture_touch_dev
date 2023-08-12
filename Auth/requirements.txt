@@ -1,0 +1,8 @@
+uvicorn
+fastapi
+pydantic-settings
+python-multipart
+orjson
+gunicorn
+pyjwt
+passlib

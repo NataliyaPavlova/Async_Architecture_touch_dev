@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from src.core.services.healthcheck_service import HealthcheckService
-from src.api.v1.response_models import HealthResponse
+from TaskTraker.src.core.services.healthcheck_service import HealthcheckService
+from TaskTraker.src.api.v1.response_models import HealthResponse
 
 router = APIRouter(prefix="/api/v1", tags=["healthcheck"])
 

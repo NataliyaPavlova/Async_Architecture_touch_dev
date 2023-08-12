@@ -1,4 +1,4 @@
-FROM python:3.11
+FROM python:3.10
 
 ENV APP_HOME=/app
 ENV PYTHONPATH=/app
@@ -7,12 +7,12 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR $APP_HOME
 
-COPY ./requirements.txt $APP_HOME
+COPY requirements.txt $APP_HOME
 
 RUN pip install --upgrade --no-cache-dir pip wheel setuptools \
     && pip install --no-cache-dir --upgrade -r requirements.txt
 
-COPY . $APP_HOME
+COPY .. $APP_HOME
 
 WORKDIR $APP_HOME
 CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8888", "--log-level",  "debug", "src.main:app"]

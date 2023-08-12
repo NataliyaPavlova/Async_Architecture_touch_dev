@@ -1,7 +1,7 @@
 from pika.exceptions import AMQPConnectionError
 
-from src.core.settings import get_settings
-from src.core.queue.connection import get_rabbitmq_connection
+from TaskTraker.src.core.settings import get_settings
+from TaskTraker.src.core.queue.connection import get_rabbitmq_connection
 
 settings = get_settings()
 
