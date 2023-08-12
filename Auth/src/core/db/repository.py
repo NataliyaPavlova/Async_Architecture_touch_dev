@@ -49,3 +49,11 @@ def add(user: UserInDB):
     cur.execute(f"INSERT INTO popugs (username, password, role,disabled) VALUES ('{user.username}', '{user.hashed_password}', '{user.role}', '{user.disabled}')")
     con.commit()
 
+
+def get_workers_db():
+    res = cur.execute("SELECT id FROM popugs WHERE role NOT IN ('manager','admin')")
+    rows = res.fetchall()
+    users = [row[0] for row in rows]
+    return users
+
+

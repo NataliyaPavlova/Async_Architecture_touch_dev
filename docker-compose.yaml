@@ -1,0 +1,35 @@
+services:
+  auth:
+    build:
+      context: .
+      dockerfile: Auth/Dockerfile
+    env_file:
+      - Auth/.env
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./Auth/src:/app/src
+
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: popug_ates_rabbitmq
+    env_file:
+      - TaskTracker/.env
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+
+  task_tracker:
+    build:
+      context: .
+      dockerfile: TaskTracker/Dockerfile
+    env_file:
+      - TaskTracker/.env
+    ports:
+      - "8880:8880"
+    volumes:
+      - ./TaskTracker/src:/app/src
+
+

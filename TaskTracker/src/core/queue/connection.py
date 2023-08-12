@@ -2,7 +2,7 @@ from functools import lru_cache
 import aio_pika
 from pika import URLParameters, BlockingConnection
 
-from TaskTraker.src.core.settings import get_settings
+from TaskTracker.src.core.settings import get_settings
 
 settings = get_settings()
 parameters = URLParameters(settings.rabbit_url)

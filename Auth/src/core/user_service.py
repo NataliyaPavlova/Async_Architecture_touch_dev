@@ -8,7 +8,7 @@ from passlib.context import CryptContext
 
 from src.core.models import TokenData, User, UserInDB
 from src.core.settings import settings
-from src.core.db.repository import get, add
+from src.core.db.repository import get, add, get_workers_db
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -71,7 +71,7 @@ def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, get_settings.SECRET_KEY, algorithms=[get_settings.ALGORITHM])
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
@@ -91,3 +91,6 @@ def get_current_active_user(
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
+
+def get_workers():
+    return get_workers_db()

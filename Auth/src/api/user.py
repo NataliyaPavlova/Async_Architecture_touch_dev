@@ -10,7 +10,8 @@ from src.core.user_service import (
     authenticate_user,
     create_access_token,
     get_current_active_user,
-    new_user)
+    new_user,
+    get_workers)
 
 router = APIRouter(prefix="", tags=["token"])
 
@@ -54,7 +55,7 @@ async def signup_for_access_token(
     return Token(
         access_token=access_token,
         token_type='bearer'
-    ) #{"access_token": access_token, "token_type": "bearer"}
+    )
 
 
 @router.get("/users/me/", response_model=User)
@@ -64,8 +65,6 @@ def read_users_me(
     return current_user
 
 
-@router.get("/users/me/items/")
-def read_own_items(
-    current_user: Annotated[User, Depends(get_current_active_user)]
-):
-    return [{"item_id": "Foo", "owner": current_user.username}]
+@router.get("/workers")
+def get_workers_tt():
+    return get_workers()
