@@ -11,6 +11,21 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
+    rabbitmq_host: str = 'rabbitmq'
+    rabbitmq_port: str = '5672'
+    rabbitmq_default_user: str
+    rabbitmq_default_pass: str
+    rabbitmq_queue_be: str
+    rabbitmq_queue_cud: str
+
+    @property
+    def rabbit_url(self):
+        return (
+            f'amqp://{self.rabbitmq_default_user}:'
+            f'{self.rabbitmq_default_pass}@{self.rabbitmq_host}:'
+            f'{self.rabbitmq_port}/'
+        )
+
     class Config:
         env_file = ENV_FILE
 

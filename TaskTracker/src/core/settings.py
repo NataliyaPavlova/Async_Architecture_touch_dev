@@ -21,19 +21,19 @@ class Settings(BaseSettings):
     def get_auth_login(self):
         return f'{self.auth_host}{self.auth_login_url}'
 
-    # rabbitmq_host: str
-    # rabbitmq_port: int
-    # rabbitmq_default_user: str
-    # rabbitmq_default_pass: str
-    # rabbitmq_queue: str
-    #
-    # @property
-    # def rabbit_url(self):
-    #     return (
-    #         f'amqp://{self.rabbitmq_default_user}:'
-    #         f'{self.rabbitmq_default_pass}@{self.rabbitmq_host}:'
-    #         f'{self.rabbitmq_port}/'
-    #     )
+    rabbitmq_host: str
+    rabbitmq_port: int
+    rabbitmq_default_user: str
+    rabbitmq_default_pass: str
+    rabbitmq_queue: str
+
+    @property
+    def rabbit_url(self):
+        return (
+            f'amqp://{self.rabbitmq_default_user}:'
+            f'{self.rabbitmq_default_pass}@{self.rabbitmq_host}:'
+            f'{self.rabbitmq_port}/'
+        )
 
     class Config:
         env_file = ENV_FILE
