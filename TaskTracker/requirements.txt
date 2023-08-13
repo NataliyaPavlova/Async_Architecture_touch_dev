@@ -1,5 +1,6 @@
 uvicorn
 fastapi
+fastapi_auth_middleware
 pydantic-settings
 orjson
 gunicorn

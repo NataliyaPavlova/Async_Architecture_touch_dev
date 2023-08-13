@@ -44,4 +44,4 @@ def verify_authorization_header(auth_header: str) -> tuple[list[str], FastAPIUse
 
 
 app = FastAPI()
-app.add_middleware(AuthMiddleware, verify_authorization_header=verify_authorization_header)
+app.add_middleware(AuthMiddleware, verify_header=verify_authorization_header)

@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
     log_level: str = 'INFO'
 
-    auth_host: str = 'https://0.0.0.0:8888/api'
+    auth_host: str = 'auth'
     workers_url: str = '/workers'
     popug_url: str = '/popug'
     auth_login_url: str = '/token'
@@ -21,11 +21,12 @@ class Settings(BaseSettings):
     def get_auth_login(self):
         return f'{self.auth_host}{self.auth_login_url}'
 
-    rabbitmq_host: str
-    rabbitmq_port: int
-    rabbitmq_default_user: str
-    rabbitmq_default_pass: str
-    rabbitmq_queue: str
+    rabbitmq_host: str = 'rabbitmq'
+    rabbitmq_port: str = '5672'
+    rabbitmq_default_user: str = 'user'
+    rabbitmq_default_pass: str = 'pass'
+    rabbitmq_queue_be: str = 'task_tracker.be'
+    rabbitmq_queue_cud: str = 'task_tracker.cud'
 
     @property
     def rabbit_url(self):

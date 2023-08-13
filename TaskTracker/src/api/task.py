@@ -77,6 +77,7 @@ async def get_popug_tasks(
             )
 @requires(['admin', 'manager'])
 async def get_all_tasks(
+        request: Request,
         task_service: TaskService = Depends()
 ) -> list[TaskResponse]:
     tasks = task_service.get_undone_tasks()

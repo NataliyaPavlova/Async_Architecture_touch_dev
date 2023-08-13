@@ -13,10 +13,10 @@ class Settings(BaseSettings):
 
     rabbitmq_host: str = 'rabbitmq'
     rabbitmq_port: str = '5672'
-    rabbitmq_default_user: str
-    rabbitmq_default_pass: str
-    rabbitmq_queue_be: str
-    rabbitmq_queue_cud: str
+    rabbitmq_default_user: str = 'user'
+    rabbitmq_default_pass: str = 'pass'
+    rabbitmq_queue_be: str = 'task_tracker.be'
+    rabbitmq_queue_cud: str = 'task_tracker.cud'
 
     @property
     def rabbit_url(self):
