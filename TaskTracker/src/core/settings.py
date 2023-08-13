@@ -13,8 +13,13 @@ class Settings(BaseSettings):
     log_level: str = 'INFO'
 
     auth_host: str = 'https://0.0.0.0:8888/api'
-    get_workers_url: str = '/workers'
+    workers_url: str = '/workers'
+    popug_url: str = '/popug'
+    auth_login_url: str = '/token'
 
+    @property
+    def get_auth_login(self):
+        return f'{self.auth_host}{self.auth_login_url}'
 
     # rabbitmq_host: str
     # rabbitmq_port: int

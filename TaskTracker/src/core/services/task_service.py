@@ -1,11 +1,9 @@
-from http.client import HTTPSConnection
-import json
 import random
 
-from src.core.settings import settings
 from src.core.services.abstract_service import AbstractService
 from src.core.db.models import Task
 from src.core.services.models import TaskInService
+from src.core.services.auth_service import AuthService
 from src.api.request_models import TaskRequest
 
 
@@ -18,8 +16,8 @@ class TaskService(AbstractService):
         created_id = self.task_repository.add(task_to_create)
         return self.task_repository.get(created_id)
 
-    def get_popug_tasks(self, popug_id: int) -> list[Task] | None:
-        tasks = self.task_repository.get_popug_tasks(popug_id)
+    def get_popug_tasks(self, popug_email: str) -> list[Task] | None:
+        tasks = self.task_repository.get_popug_tasks(popug_email)
         if tasks:
             return tasks
         return None
@@ -30,14 +28,11 @@ class TaskService(AbstractService):
             return tasks
         return None
 
-    def shuffle(self):
+    def shuffle(self, auth_header: dict) -> list[Task] | None:
         undone_tasks = self.get_undone_tasks()
         # get all popugs-workers
-        with HTTPSConnection(settings.auth_host) as connection:
-            headers = {'Content-type': 'application/json'}
-            connection.request('GET', settings.get_workers_url, headers)
-            response = connection.getresponse()
-            workers = response.read().decode()
+        auth_service = AuthService()
+        workers = auth_service.get_workers_auth(auth_header)
         if not workers:
             return None
         # randomly shuffle among workers

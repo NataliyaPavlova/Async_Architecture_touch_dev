@@ -3,16 +3,12 @@ from typing import Annotated
 
 from fastapi import APIRouter
 from fastapi import Depends, HTTPException, status
+from starlette.authentication import requires
+from starlette.requests import Request
 
-from src.api.response_models import TaskResponse
+from src.api.response_models import TaskResponse, UserResponse
 from src.api.request_models import TaskRequest
 from src.core.services.task_service import TaskService
-
-# from src.core.user_service import (
-#     authenticate_user,
-#     create_access_token,
-#     get_current_active_user,
-#     new_user)
 
 router = APIRouter(prefix="", tags=["task"])
 
@@ -49,13 +45,12 @@ async def create_task(
             status_code=status.HTTP_200_OK,
             summary='Get tasks for popug',
             response_description='All tasks assigned to popug'
-
             )
 async def get_popug_tasks(
-        popug_id: int,
+        request: Request,
         task_service: TaskService = Depends()
 ) -> list[TaskResponse]:
-    tasks = task_service.get_popug_tasks(popug_id)
+    tasks = task_service.get_popug_tasks(request.user.email)
     if not tasks:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -80,6 +75,7 @@ async def get_popug_tasks(
             response_description='All tasks with any status but "done"'
 
             )
+@requires(['admin', 'manager'])
 async def get_all_tasks(
         task_service: TaskService = Depends()
 ) -> list[TaskResponse]:
@@ -100,13 +96,14 @@ async def get_all_tasks(
     ]
 
 
-@router.patch("/{task_id}",
-             response_model=TaskResponse,
-             response_model_exclude_none=True,
-             status_code=status.HTTP_200_OK,
-             summary='Make task done',
-             response_description='Task is done'
-             )
+@router.patch(
+    "/{task_id}",
+    response_model=TaskResponse,
+    response_model_exclude_none=True,
+    status_code=status.HTTP_200_OK,
+    summary='Make task done',
+    response_description='Task is done'
+)
 async def update_task_status(
         task_id: int,
         task_service: TaskService = Depends()
@@ -133,10 +130,13 @@ async def update_task_status(
              summary='Shuffle undone tasks',
              response_description='Undone tasks with new assignees'
              )
+@requires(["admin", "manager"])
 async def shuffle_tasks(
+        request: Request,
         task_service: TaskService = Depends()
 ) -> list[TaskResponse]:
-    tasks_shuffled = task_service.shuffle()
+    auth_header = request.headers.get('authorization')
+    tasks_shuffled = task_service.shuffle(auth_header)
     if not tasks_shuffled:
         raise HTTPException(
             status_code=status.HTTP_406_NOT_ACCEPTABLE,
@@ -149,4 +149,3 @@ async def shuffle_tasks(
         status=task_updated.status,
         popug_id=task_updated.popug_id
     ) for task_updated in tasks_shuffled]
-

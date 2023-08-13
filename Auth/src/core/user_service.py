@@ -37,19 +37,21 @@ def authenticate_user(username: str, password: str):
     return user
 
 
-def add_user(username: str, password: str):
+def add_user(username: str, password: str, email: str, role: str):
     add(
         user=UserInDB(
             username=username,
-            hashed_password=password)
+            hashed_password=password,
+            email=email,
+            role=role,)
     )
 
     return get_user(username)
 
 
-def new_user(username: str, password: str):
+def new_user(username: str, password: str, email: str, role: str) -> UserInDB:
     hashed_password = get_password_hash(password)
-    user = add_user(username, hashed_password)
+    user = add_user(username, hashed_password, email, role)
     return user
 
 
