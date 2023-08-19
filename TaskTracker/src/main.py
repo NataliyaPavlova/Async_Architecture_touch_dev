@@ -38,7 +38,7 @@ def verify_authorization_header(auth_header: str) -> tuple[list[str], FastAPIUse
         response = RedirectResponse(settings.auth_login_url)
         return response
 
-    user = auth_service.get_user()
+    user = auth_service.get_user(auth_header)
     scopes = [user.role]
     return scopes, user
 

@@ -7,3 +7,4 @@ orjson
 gunicorn
 pyjwt
 passlib
+aio_pika

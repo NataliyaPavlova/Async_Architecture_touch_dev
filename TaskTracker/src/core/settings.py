@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     auth_host: str = 'auth'
     workers_url: str = '/workers'
     popug_url: str = '/popug'
+    internal_url: str = '/popug/internal/{public_id}'
+    auth_secret: str = 'sejhjkbfhhv'
     auth_login_url: str = '/token'
 
     @property
@@ -25,8 +27,10 @@ class Settings(BaseSettings):
     rabbitmq_port: str = '5672'
     rabbitmq_default_user: str = 'user'
     rabbitmq_default_pass: str = 'pass'
-    rabbitmq_queue_be: str = 'task_tracker.be'
-    rabbitmq_queue_cud: str = 'task_tracker.cud'
+    rabbitmq_queue_be: str = 'task_lifecycle.be'
+    rabbitmq_queue_stream: str = 'task_lifecycle.stream'
+    rabbitmq_queue_consume_be: str = 'user_lifecycle.be'
+    rabbitmq_queue_consume_stream: str = 'user_lifecycle.stream'
 
     @property
     def rabbit_url(self):

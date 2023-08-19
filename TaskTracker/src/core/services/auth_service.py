@@ -6,23 +6,28 @@ from src.core.services.models import User
 
 class AuthService:
 
-    def get_user(self) -> User:
+    def get_user(self, auth_header: str) -> User:
         with HTTPSConnection(settings.auth_host) as connection:
-            headers = {'Content-type': 'application/json'}
+            headers = {'Content-type': 'application/json', 'Authorization': f'Bearer {auth_header}'}
             connection.request('GET', settings.popug_url, headers)
             response = connection.getresponse()
             popug = response.read().decode()
         return User(
-            username=popug['username'],
             role=popug['role'],
             email=popug['email'],
+            public_id=popug['public_id'],
         )
 
-    def get_workers_auth(self, headers: dict) -> dict:
+    def get_popug_info(self) -> User:
         with HTTPSConnection(settings.auth_host) as connection:
-            headers['Content-type'] = 'application/json'
-            connection.request('GET', settings.get_workers_url, headers)
+            headers = {'Content-type': 'application/json', 'X-Secret': f'Base {settings.auth_secret}'}
+            connection.request('GET', settings.internal_url, headers)
             response = connection.getresponse()
-            workers = response.read().decode()
-        return workers
+            popug = response.read().decode()
+        return User(
+            role=popug['role'],
+            email=popug['email'],
+            public_id=popug['public_id'],
+        )
+
 

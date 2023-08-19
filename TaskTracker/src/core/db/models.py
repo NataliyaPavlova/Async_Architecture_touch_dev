@@ -1,16 +1,17 @@
 from pydantic import BaseModel
+from uuid import uuid4
 
 
 class Task(BaseModel):
     task_id: int
     description: str
     status: str = 'new'
-    popug_email: int = 0
+    popug_public_id: str = ''
+    public_id: str = uuid4()
 
 
 class User(BaseModel):
-    username: str
     role: str = 'user'
     email: str
-    disabled: int = 0
+    public_id: str
 

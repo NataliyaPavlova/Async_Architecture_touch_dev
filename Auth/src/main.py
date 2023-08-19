@@ -1,17 +1,20 @@
 from contextlib import asynccontextmanager
+import uvicorn
 
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
 from src.api import healthcheck, user
 from src.core.db.repository import create_tables, close_connection
-
+from src.core.queue.rabbit_sender import message_broker
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_tables()
+    await message_broker.connect()
     yield
     close_connection()
+    await message_broker.stop()
 
 
 app = FastAPI(
@@ -26,3 +29,7 @@ app.include_router(healthcheck.router)
 app.include_router(user.router)
 
 API_PREFIX = '/api'
+
+
+if __name__=='__main__':
+    uvicorn.run(port=8888, log_level='info')

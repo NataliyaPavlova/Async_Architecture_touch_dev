@@ -1,7 +1,7 @@
 from datetime import timedelta
 from typing import Annotated
 
-from fastapi import APIRouter
+from fastapi import APIRouter, BackgroundTasks
 from fastapi import Depends, HTTPException, status
 from starlette.authentication import requires
 from starlette.requests import Request
@@ -9,6 +9,10 @@ from starlette.requests import Request
 from src.api.response_models import TaskResponse, UserResponse
 from src.api.request_models import TaskRequest
 from src.core.services.task_service import TaskService
+from src.core.queue.rabbit_sender import event_publisher
+from src.core.queue.models import BEvent, StreamEvent
+
+
 
 router = APIRouter(prefix="", tags=["task"])
 
@@ -22,7 +26,8 @@ router = APIRouter(prefix="", tags=["task"])
              )
 async def create_task(
         task: TaskRequest,
-        task_service: TaskService = Depends()
+        background_tasks: BackgroundTasks,
+        task_service: TaskService = Depends(),
 ) -> TaskResponse:
     task_added = task_service.create(task)
     if not task_added:
@@ -31,11 +36,17 @@ async def create_task(
             detail="Something wrong happened...",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    background_tasks.add_task(event_publisher.publish_be,
+                              event=BEvent(name='TaskAdded', public_id=task_added.public_id))
+    background_tasks.add_task(event_publisher.publish_stream,
+                              event=StreamEvent(name='TaskCreated', public_id=task_added.public_id))
+
     return TaskResponse(
         task_id=task_added.task_id,
         description=task_added.description,
         status=task_added.status,
-        popug_id=task_added.popug_id
+        popug_public_id=task_added.popug_id,
+        public_id=task_added.public_id,
     )
 
 
@@ -50,7 +61,7 @@ async def get_popug_tasks(
         request: Request,
         task_service: TaskService = Depends()
 ) -> list[TaskResponse]:
-    tasks = task_service.get_popug_tasks(request.user.email)
+    tasks = task_service.get_popug_tasks(request.user.public_id)
     if not tasks:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -62,7 +73,8 @@ async def get_popug_tasks(
             task_id=task.task_id,
             description=task.description,
             status=task.status,
-            popug_id=task.popug_id
+            popug_public_id=task.popug_id,
+            public_id=task.public_id,
         ) for task in tasks
     ]
 
@@ -92,7 +104,8 @@ async def get_all_tasks(
             task_id=task.task_id,
             description=task.description,
             status=task.status,
-            popug_id=task.popug_id
+            popug_public_id=task.popug_id,
+            public_id=task.public_id,
         ) for task in tasks
     ]
 
@@ -107,6 +120,7 @@ async def get_all_tasks(
 )
 async def update_task_status(
         task_id: int,
+        background_tasks: BackgroundTasks,
         task_service: TaskService = Depends()
 ) -> TaskResponse:
     task_updated = task_service.update_status(task_id)
@@ -116,11 +130,17 @@ async def update_task_status(
             detail="Something wrong happened...",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    background_tasks.add_task(event_publisher.publish_be,
+                              event=BEvent(name='TaskDone', public_id=task_updated.public_id))
+    background_tasks.add_task(event_publisher.publish_stream,
+                              event=StreamEvent(name='TaskUpdated', public_id=task_updated.public_id))
+
     return TaskResponse(
         task_id=task_updated.task_id,
         description=task_updated.description,
         status=task_updated.status,
-        popug_id=task_updated.popug_id
+        popug_public_id=task_updated.popug_id,
+        public_id=task_updated.public_id,
     )
 
 
@@ -134,6 +154,7 @@ async def update_task_status(
 @requires(["admin", "manager"])
 async def shuffle_tasks(
         request: Request,
+        background_tasks: BackgroundTasks,
         task_service: TaskService = Depends()
 ) -> list[TaskResponse]:
     auth_header = request.headers.get('authorization')
@@ -144,9 +165,13 @@ async def shuffle_tasks(
             detail="Something wrong happened...",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    background_tasks.add_task(event_publisher.publish_be,
+                              event=BEvent(name='TaskShuffled'))
+
     return [TaskResponse(
         task_id=task_updated.task_id,
         description=task_updated.description,
         status=task_updated.status,
-        popug_id=task_updated.popug_id
+        popug_public_id=task_updated.popug_id,
+        public_id=task_updated.public_id,
     ) for task_updated in tasks_shuffled]

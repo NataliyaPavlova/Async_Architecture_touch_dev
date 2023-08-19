@@ -10,10 +10,9 @@ from src.core.models import TokenData, User, UserInDB
 from src.core.settings import settings
 from src.core.db.repository import get, add, get_workers_db
 
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)

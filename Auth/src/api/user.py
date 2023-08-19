@@ -1,7 +1,7 @@
 from datetime import timedelta
 from typing import Annotated
 
-from fastapi import APIRouter, Form
+from fastapi import APIRouter, Form, BackgroundTasks
 from fastapi import Depends, HTTPException, status
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
@@ -13,6 +13,9 @@ from src.core.user_service import (
     get_current_active_user,
     new_user,
     get_workers)
+from src.core.queue.rabbit_sender import message_broker
+from src.core.queue.models import BEvent, StreamEvent
+
 
 router = APIRouter(prefix="", tags=["token"])
 
@@ -46,6 +49,7 @@ async def signup_for_access_token(
     password: Annotated[str, Form()],
     email: Annotated[str, Form()],
     role: Annotated[str, Form()],
+    background_tasks: BackgroundTasks,
 ):
     user = new_user(username, password, email, role)
     if not user:
@@ -54,6 +58,10 @@ async def signup_for_access_token(
             detail="Service Unavailable",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+    background_tasks.add_task(message_broker.publish_be, BEvent(name='UserAdded', public_id=user.public_id))
+    background_tasks.add_task(message_broker.publish_stream, StreamEvent(name='UserCreated', public_id=user.public_id))
+
     response = RedirectResponse(url='/token')
     return response
 

@@ -10,6 +10,7 @@ def create_tables():
 
     cur.execute("CREATE TABLE IF NOT EXISTS popugs ("
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "public_id NVARCHAR, "
                 "username NVARCHAR, "
                 "password NVARCHAR, "
                 "role NVARCHAR,"
@@ -25,7 +26,7 @@ def close_connection():
 
 
 def get(username: str):
-    res = cur.execute(f"SELECT username, password, role, disabled, email FROM popugs WHERE username='{username}'")
+    res = cur.execute(f"SELECT username, password, role, disabled, email,public_id FROM popugs WHERE username='{username}'")
     row = res.fetchone()
     if not row:
         return None
@@ -35,6 +36,7 @@ def get(username: str):
         role=row[2],
         disabled=row[3],
         email=row[4],
+        public_id=row[5],
     )
 
 
@@ -52,7 +54,7 @@ def get_list():
 
 
 def add(user: UserInDB):
-    cur.execute(f"INSERT INTO popugs (username, password, role,disabled,email) VALUES ('{user.username}', '{user.hashed_password}', '{user.role}', '{user.disabled}','{user.email}')")
+    cur.execute(f"INSERT INTO popugs (username, password, role,disabled,email,public_id) VALUES ('{user.username}', '{user.hashed_password}', '{user.role}', '{user.disabled}','{user.email}', '{user.public_id}')")
     con.commit()
 
 
