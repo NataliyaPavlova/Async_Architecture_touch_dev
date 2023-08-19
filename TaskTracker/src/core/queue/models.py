@@ -10,5 +10,5 @@ class BEvent(Event):
     pass
 
 
-class CUDEvent(Event):
+class StreamEvent(Event):
     pass

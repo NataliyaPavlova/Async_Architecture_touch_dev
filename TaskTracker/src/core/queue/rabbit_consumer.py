@@ -1,7 +1,9 @@
 import logging
 
 import asyncio
-from aio_pika import DeliveryMode, Message, connect, AbstractIncomingMessage
+from aio_pika import DeliveryMode, Message, connect
+from aio_pika.abc import AbstractIncomingMessage
+
 
 from src.core.queue.models import BEvent, StreamEvent, Event
 from src.core.settings import settings
@@ -54,4 +56,4 @@ class QueueConsumer:
         self.connection.close()
 
 
-events_consumer = QueueConsumer()
+event_consumer = QueueConsumer()

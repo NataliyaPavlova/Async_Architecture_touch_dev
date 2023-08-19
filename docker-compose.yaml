@@ -19,15 +19,15 @@ services:
       - "15672:15672"
 
 
-#  task_tracker:
-#    build:
-#      context: .
-#      dockerfile: TaskTracker/Dockerfile
-#    env_file:
-#      - TaskTracker/.env
-#    ports:
-#      - "8880:8880"
-#    volumes:
-#      - ./TaskTracker/src:/app/src
+  task_tracker:
+    build:
+      context: .
+      dockerfile: TaskTracker/Dockerfile
+    env_file:
+      - TaskTracker/.env
+    ports:
+      - "8880:8880"
+    volumes:
+      - ./TaskTracker/src:/app/src
 
 
