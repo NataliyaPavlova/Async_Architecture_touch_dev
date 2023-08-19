@@ -25,7 +25,22 @@ def close_connection():
     con.close()
 
 
-def get(username: str):
+def get(public_id: str):
+    res = cur.execute(f"SELECT username, password, role, disabled, email,public_id FROM popugs WHERE public_id='{public_id}'")
+    row = res.fetchone()
+    if not row:
+        return None
+    return UserInDB(
+        username=row[0],
+        hashed_password=row[1],
+        role=row[2],
+        disabled=row[3],
+        email=row[4],
+        public_id=row[5],
+    )
+
+
+def get_by_name(username: str):
     res = cur.execute(f"SELECT username, password, role, disabled, email,public_id FROM popugs WHERE username='{username}'")
     row = res.fetchone()
     if not row:
@@ -41,7 +56,7 @@ def get(username: str):
 
 
 def get_list():
-    res = cur.execute("SELECT username, password, role, disabled, email FROM popugs")
+    res = cur.execute("SELECT username, password, role, disabled, email,public_id FROM popugs")
     rows = res.fetchall()
     users = [UserInDB(
         username=row[0],
@@ -49,13 +64,15 @@ def get_list():
         role=row[2],
         disabled=row[3],
         email=row[4],
+        public_id=row[5],
     ) for row in rows]
     return users
 
 
-def add(user: UserInDB):
+def add(user: UserInDB) -> int:
     cur.execute(f"INSERT INTO popugs (username, password, role,disabled,email,public_id) VALUES ('{user.username}', '{user.hashed_password}', '{user.role}', '{user.disabled}','{user.email}', '{user.public_id}')")
     con.commit()
+    return cur.lastrowid
 
 
 def get_workers_db():

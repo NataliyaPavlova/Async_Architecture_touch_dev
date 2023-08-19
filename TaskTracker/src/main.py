@@ -6,16 +6,23 @@ from fastapi_auth_middleware import AuthMiddleware, FastAPIUser
 
 from src.api import healthcheck, task
 from src.core.db.repository import create_tables, close_connection
-from src.core.services.models import User
 from src.core.services.auth_service import AuthService
 from src.core.settings import settings
+from src.core.queue.rabbit_sender import event_publisher
+from src.core.queue.rabbit_consumer import event_consumer
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_tables()
+    await event_publisher.connect()
+    await event_consumer.connect()
+    await event_consumer.consume_be()
+    await event_consumer.consume_stream()
     yield
     close_connection()
+    await event_publisher.stop()
+    await event_consumer.stop()
 
 
 app = FastAPI(

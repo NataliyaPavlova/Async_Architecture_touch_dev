@@ -12,7 +12,9 @@ from src.core.user_service import (
     create_access_token,
     get_current_active_user,
     new_user,
-    get_workers)
+    get_workers,
+    internal_get_popug
+)
 from src.core.queue.rabbit_sender import message_broker
 from src.core.queue.models import BEvent, StreamEvent
 
@@ -33,7 +35,7 @@ async def login_for_access_token(
         )
     access_token_expires = timedelta(minutes=30)
     access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": user.public_id}, expires_delta=access_token_expires
     )
     headers = {'Authorization': f'Bearer {access_token}'}
 
@@ -71,6 +73,15 @@ def read_users_me(
     current_user: Annotated[User, Depends(get_current_active_user)]
 ):
     return current_user
+
+
+@router.get("/popug/internal/{popug_id}", response_model=User)
+def read_users_me(
+    popug_id: str,
+):
+    # to do check secret in headers
+    user = internal_get_popug(popug_id)
+    return user
 
 
 @router.get("/workers")

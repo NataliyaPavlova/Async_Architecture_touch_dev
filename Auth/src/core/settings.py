@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "ea3dc753ae38919e81362d39cf6d6d03b6a82d2168e97d3f50a72a132c98a7cf"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    auth_secret: str = 'sejhjkbfhhv'
 
     rabbitmq_host: str = 'rabbitmq'
     rabbitmq_port: str = '5672'

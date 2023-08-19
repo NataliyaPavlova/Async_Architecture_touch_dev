@@ -8,7 +8,7 @@ from passlib.context import CryptContext
 
 from src.core.models import TokenData, User, UserInDB
 from src.core.settings import settings
-from src.core.db.repository import get, add, get_workers_db
+from src.core.db.repository import get, add, get_workers_db, get_by_name
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -22,13 +22,18 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def get_user(username: str):
-    user = get(username)
+def get_user(public_id: str):
+    user = get(public_id)
+    return user
+
+
+def get_user_by_name(username: str):
+    user = get_by_name(username)
     return user
 
 
 def authenticate_user(username: str, password: str):
-    user = get_user(username)
+    user = get_user_by_name(username)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
@@ -37,15 +42,15 @@ def authenticate_user(username: str, password: str):
 
 
 def add_user(username: str, password: str, email: str, role: str):
-    add(
-        user=UserInDB(
-            username=username,
-            hashed_password=password,
-            email=email,
-            role=role,)
+    user = UserInDB(
+        username=username,
+        hashed_password=password,
+        email=email,
+        role=role,
     )
+    id = add(user)
 
-    return get_user(username)
+    return user
 
 
 def new_user(username: str, password: str, email: str, role: str) -> UserInDB:
@@ -73,13 +78,13 @@ def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     )
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
+        public_id: str = payload.get("sub")
+        if public_id is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
+        token_data = TokenData(public_id=public_id)
     except jwt.InvalidTokenError:
         raise credentials_exception
-    user = get_user(username=token_data.username)
+    user = get_user(public_id=token_data.public_id)
     if user is None:
         raise credentials_exception
     return user
@@ -91,6 +96,10 @@ def get_current_active_user(
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
+
+
+def internal_get_popug(public_id: str):
+    return get_user(public_id)
 
 
 def get_workers():

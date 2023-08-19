@@ -9,8 +9,10 @@ ENV_FILE = str(BASE_DIR / '.env')
 
 class Settings(BaseSettings):
     log_filename: str = 'popug.log'
-
     log_level: str = 'INFO'
+
+    SECRET_KEY: str = "ea3dc753ae38919e81362d39cf6d6d03b6a82d2168e97d3f50a72a132c98a7cf"
+    ALGORITHM: str = "HS256"
 
     auth_host: str = 'auth'
     workers_url: str = '/workers'
