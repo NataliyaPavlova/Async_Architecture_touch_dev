@@ -1,0 +1,10 @@
+uvicorn
+fastapi
+fastapi_auth_middleware
+pydantic-settings
+python-multipart
+orjson
+gunicorn
+pyjwt
+passlib
+aio_pika

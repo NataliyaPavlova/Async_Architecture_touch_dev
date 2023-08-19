@@ -1,34 +1,33 @@
 services:
-  postgres:
-    image: postgres:13.2
-    restart: always
-    container_name: postgres_stage
-    volumes:
-      - postgres_data_stage:/var/lib/postgresql/data/
-    ports:
-      - "5432:5432"
+  auth:
+    build:
+      context: .
+      dockerfile: Auth/Dockerfile
     env_file:
-      - .env
+      - Auth/.env
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./Auth/src:/app/src
+
 
   rabbitmq:
     image: rabbitmq:3-management
     container_name: popug_ates_rabbitmq
-    env_file:
-      - .env
     ports:
       - "5672:5672"
       - "15672:15672"
 
-  backend:
+
+  task_tracker:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: TaskTracker/Dockerfile
     env_file:
-      - .env
+      - TaskTracker/.env
     ports:
-      - "8888:8888"
+      - "8880:8880"
+    volumes:
+      - ./TaskTracker/src:/app/src
 
 
-
-volumes:
-  postgres_data_stage:

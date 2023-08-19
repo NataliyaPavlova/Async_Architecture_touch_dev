@@ -1,0 +1,8 @@
+uvicorn
+fastapi
+fastapi_auth_middleware
+pydantic-settings
+orjson
+gunicorn
+aio_pika==8.3.0
+pyjwt
