@@ -61,6 +61,18 @@ class TaskRepository:
             public_id=row[4],
         )
 
+    def get_task(self, public_id: str):
+        res = cur.execute(f"SELECT description, status, popug_public_id, public_id FROM popug_tasks WHERE public_id='{public_id}'")
+        row = res.fetchone()
+        if not row:
+            return None
+        return Task(
+            description=row[0],
+            status=row[1],
+            popug_public_id=row[2],
+            public_id=row[3],
+        )
+
     def get_undone_tasks(self):
         res = cur.execute(f"SELECT description, status,id,popug_public_id,public_id FROM popug_tasks WHERE status!='done'")
         rows = res.fetchall()

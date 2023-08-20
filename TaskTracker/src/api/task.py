@@ -79,6 +79,22 @@ async def get_popug_tasks(
     ]
 
 
+@router.get("/task/internal/{task_id}", response_model=TaskResponse)
+async def get_task_info(
+        task_id: str,
+        task_service: TaskService = Depends()
+):
+    # to do check secret in headers
+    task = task_service.get_task(task_id)
+    return TaskResponse(
+            task_id=task.task_id,
+            description=task.description,
+            status=task.status,
+            popug_public_id=task.popug_id,
+            public_id=task.public_id,
+    )
+
+
 @router.get('/list',
             response_model=list[TaskResponse],
             response_model_exclude_none=True,
@@ -165,8 +181,11 @@ async def shuffle_tasks(
             detail="Something wrong happened...",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    background_tasks.add_task(event_publisher.publish_be,
-                              event=BEvent(name='TaskShuffled'))
+    for task in tasks_shuffled:
+        background_tasks.add_task(event_publisher.publish_be,
+                                  event=BEvent(name='TaskAssigned', public_id=task.public_id))
+        background_tasks.add_task(event_publisher.publish_stream,
+                                  event=BEvent(name='TaskUpdated', public_id=task.public_id))
 
     return [TaskResponse(
         task_id=task_updated.task_id,
