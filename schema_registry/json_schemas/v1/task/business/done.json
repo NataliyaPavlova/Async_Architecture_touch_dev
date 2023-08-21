@@ -1,0 +1,41 @@
+{
+  "$defs": {
+    "EventData": {
+      "properties": {
+        "public_id": {
+          "title": "Public Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "public_id"
+      ],
+      "title": "EventData",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "event_id": {
+      "title": "Event Id",
+      "type": "string"
+    },
+    "event_version": 1,
+    "event_name": "TaskDone",
+    "event_time": {
+      "title": "Event Time",
+      "type": "string"
+    },
+    "producer": "tasktracker",
+    "data": {
+      "$ref": "#/$defs/EventData"
+    }
+  },
+  "required": [
+    "event_id",
+    "event_name",
+    "event_time",
+    "data"
+  ],
+  "title": "Event",
+  "type": "object"
+}

@@ -13,7 +13,7 @@ class Event(BaseModel):
     event_version: int = 1
     event_name: str
     event_time: str = datetime.datetime.now().strftime('%Y-%m-%d %H:%I:%S')
-    producer: str = 'tasktracker'
+    producer: str = 'accounting'
     data: EventData
 
 

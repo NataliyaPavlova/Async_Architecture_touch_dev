@@ -19,8 +19,9 @@ class Settings(BaseSettings):
     auth_secret: str = 'sejhjkbfhhv'
     auth_login_url: str = '/token'
 
-    accounting_secret: str = 'sejhjkbfhhv'
-
+    tasktracker_host: str = 'task-tracker'
+    task_internal_url: str = '/task/internal/{public_id}'
+    tasktracker_secret: str = 'sejhjkbfhhv'
 
     @property
     def get_auth_login(self):
@@ -30,10 +31,14 @@ class Settings(BaseSettings):
     rabbitmq_port: str = '5672'
     rabbitmq_default_user: str = 'user'
     rabbitmq_default_pass: str = 'pass'
-    rabbitmq_queue_be: str = 'task_lifecycle.be'
-    rabbitmq_queue_stream: str = 'task_lifecycle.stream'
-    rabbitmq_queue_consume_be: str = 'user_lifecycle.be'
-    rabbitmq_queue_consume_stream: str = 'user_lifecycle.stream'
+
+    rabbitmq_queue_be: str = 'account_lifecycle.be'
+    rabbitmq_queue_stream: str = 'account_lifecycle.stream'
+
+    auth_queue_consume_be: str = 'user_lifecycle.be'
+    auth_queue_consume_stream: str = 'user_lifecycle.stream'
+    tasktracker_queue_consume_be: str = 'task_lifecycle.be'
+    tasktracker_queue_consume_stream: str = 'task_lifecycle.stream'
 
     @property
     def rabbit_url(self):

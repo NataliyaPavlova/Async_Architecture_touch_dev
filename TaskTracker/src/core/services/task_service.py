@@ -40,3 +40,6 @@ class TaskService(AbstractService):
         self.task_repository.update_status(task_id)
         return self.task_repository.get(task_id)
 
+    def get_task(self, task_id: str) -> Task:
+        return self.task_repository.get(task_id)
+

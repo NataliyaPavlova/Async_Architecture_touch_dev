@@ -76,7 +76,7 @@ def read_users_me(
 
 
 @router.get("/popug/internal/{popug_id}", response_model=User)
-def read_users_me(
+def get_popug_info(
     popug_id: str,
 ):
     # to do check secret in headers
