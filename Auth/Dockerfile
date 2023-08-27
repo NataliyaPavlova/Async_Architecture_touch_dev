@@ -15,6 +15,6 @@ RUN pip install --upgrade --no-cache-dir pip wheel setuptools \
 COPY Auth/.env $APP_HOME/
 
 WORKDIR $APP_HOME
-CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8888", "--log-level",  "debug", "src.main:app"]
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8888", "--log-level",  "info", "src.main:app"]
 
 EXPOSE 8888

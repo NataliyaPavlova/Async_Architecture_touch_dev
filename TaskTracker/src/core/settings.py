@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     log_level: str = 'INFO'
 
     SECRET_KEY: str = "ea3dc753ae38919e81362d39cf6d6d03b6a82d2168e97d3f50a72a132c98a7cf"
-    ALGORITHM: str = "HS256"
+    ALGORITHM: str = "HS25 6"
 
     auth_host: str = 'auth'
     internal_url: str = '/popug/internal/{public_id}'

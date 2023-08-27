@@ -19,13 +19,25 @@
       "title": "Event Id",
       "type": "string"
     },
-    "event_version": 1,
-    "event_name": "UserAdded",
+    "event_version":  {
+      "default": 1,
+      "title": "Event Version",
+      "type": "integer"
+    },
+    "event_name": {
+      "default": "UserAdded",
+      "title": "Event Name",
+      "type": "string"
+    },
     "event_time": {
       "title": "Event Time",
       "type": "string"
     },
-    "producer": "auth",
+    "producer": {
+      "default": "auth",
+      "title": "Producer Name",
+      "type": "string"
+    },
     "data": {
       "$ref": "#/$defs/EventData"
     }

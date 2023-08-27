@@ -9,7 +9,7 @@ class EventData(BaseModel):
 
 class Event(BaseModel):
     model_config = ConfigDict(title='Event', arbitrary_types_allowed=True)
-    event_id: str = uuid4()
+    event_id: str = str(uuid4())
     event_version: int = 1
     event_name: str
     event_time: str = datetime.datetime.now().strftime('%Y-%m-%d %H:%I:%S')
@@ -23,3 +23,4 @@ class BEvent(Event):
 
 class StreamEvent(Event):
     pass
+

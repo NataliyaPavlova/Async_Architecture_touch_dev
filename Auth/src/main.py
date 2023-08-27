@@ -14,7 +14,7 @@ async def lifespan(app: FastAPI):
     await message_broker.connect()
     yield
     close_connection()
-    await message_broker.stop()
+
 
 
 app = FastAPI(
@@ -31,5 +31,5 @@ app.include_router(user.router)
 API_PREFIX = '/api'
 
 
-if __name__=='__main__':
-    uvicorn.run(port=8888, log_level='info')
+if __name__ == '__main__':
+    uvicorn.run(app='main:app', port=8888, log_level='info')

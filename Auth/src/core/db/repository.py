@@ -1,6 +1,8 @@
 import sqlite3
 
 from src.core.db.models import UserInDB
+from src.core.models import User
+
 
 con = sqlite3.connect("tutorial.db", check_same_thread=False)
 cur = con.cursor()
@@ -76,9 +78,14 @@ def add(user: UserInDB) -> int:
 
 
 def get_workers_db():
-    res = cur.execute("SELECT id FROM popugs WHERE role NOT IN ('manager','admin')")
+    res = cur.execute("SELECT username, role, email, public_id FROM popugs WHERE role NOT IN ('manager','admin')")
     rows = res.fetchall()
-    users = [row[0] for row in rows]
+    users = [User(
+        username=row[0],
+        role=row[1],
+        email=row[2],
+        public_id=row[3],
+    ) for row in rows]
     return users
 
 

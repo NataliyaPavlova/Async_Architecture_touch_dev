@@ -16,7 +16,8 @@ from src.core.user_service import (
     internal_get_popug
 )
 from src.core.queue.rabbit_sender import message_broker
-from src.core.queue.models import BEvent, StreamEvent
+from src.core.queue.models import BEvent, StreamEvent, EventData
+from src.api.response_models import UserResponse
 
 
 router = APIRouter(prefix="", tags=["token"])
@@ -61,8 +62,8 @@ async def signup_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    background_tasks.add_task(message_broker.publish_be, BEvent(name='UserAdded', public_id=user.public_id))
-    background_tasks.add_task(message_broker.publish_stream, StreamEvent(name='UserCreated', public_id=user.public_id))
+    background_tasks.add_task(message_broker.publish_be, BEvent(event_name='UserAdded', data=EventData(public_id=str(user.public_id))))
+    background_tasks.add_task(message_broker.publish_stream, StreamEvent(event_name='UserCreated', data=EventData(public_id=str(user.public_id))))
 
     response = RedirectResponse(url='/token')
     return response
@@ -84,14 +85,18 @@ def get_popug_info(
     return user
 
 
-@router.get("/workers")
+@router.get("/workers", response_model=list[UserResponse])
 def get_workers_tt(
     current_user: Annotated[User, Depends(get_current_active_user)]
 ):
     if current_user.role in ['admin', 'manager']:
-        return JSONResponse(
-            content={'workers': get_workers()}
-        )
+        workers = get_workers()
+        return [UserResponse(
+            username=worker.username,
+            role=worker.role,
+            email=worker.email,
+            public_id=worker.public_id)
+            for worker in workers]
     raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST,
         detail="You do not have enough permissions",

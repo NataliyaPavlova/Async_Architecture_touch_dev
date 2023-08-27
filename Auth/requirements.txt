@@ -8,3 +8,4 @@ gunicorn
 pyjwt
 passlib
 aio_pika
+jsonschema
