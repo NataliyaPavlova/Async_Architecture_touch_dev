@@ -6,7 +6,7 @@ from fastapi_auth_middleware import FastAPIUser
 class TaskInService(BaseModel):
     description: str
     status: str = 'new'
-    popug_public_id: str
+    popug_public_id: str = ''
     public_id: str = uuid4()
 
 

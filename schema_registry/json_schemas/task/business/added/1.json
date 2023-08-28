@@ -19,13 +19,25 @@
       "title": "Event Id",
       "type": "string"
     },
-    "event_version": 1,
-    "event_name": "TaskAssigned",
+     "event_version":  {
+      "default": 1,
+      "title": "Event Version",
+      "type": "integer"
+    },
+    "event_name": {
+      "default": "TaskAdded",
+      "title": "Event Name",
+      "type": "string"
+    },
     "event_time": {
       "title": "Event Time",
       "type": "string"
     },
-    "producer": "tasktracker",
+    "producer": {
+      "default": "tasktracker",
+      "title": "Producer Name",
+      "type": "string"
+    },
     "data": {
       "$ref": "#/$defs/EventData"
     }

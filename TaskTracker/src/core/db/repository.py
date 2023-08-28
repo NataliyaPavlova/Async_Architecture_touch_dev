@@ -105,9 +105,9 @@ class UserRepository:
         if not row:
             return None
         return User(
-            role=row[2],
-            email=row[4],
-            public_id=row[5],
+            role=row[0],
+            email=row[1],
+            public_id=row[2],
         )
 
     def get_list_of_workers(self) -> list[User]:

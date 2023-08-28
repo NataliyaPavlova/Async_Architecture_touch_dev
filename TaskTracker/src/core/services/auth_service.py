@@ -23,10 +23,10 @@ class AuthService(AbstractService):
             public_id=popug['public_id'],
         )
 
-    def get_popug_info(self) -> User:
+    def get_popug_info(self, public_id: str) -> User:
         with HTTPSConnection(settings.auth_host) as connection:
             headers = {'Content-type': 'application/json', 'X-Secret': f'Base {settings.auth_secret}'}
-            connection.request('GET', settings.internal_url, headers)
+            connection.request('GET', f'{settings.internal_url}', headers)
             response = connection.getresponse()
             popug = response.read().decode()
         return User(
